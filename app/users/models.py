@@ -3,6 +3,7 @@ from pydantic import EmailStr
 from sqlalchemy import Boolean, DateTime, ForeignKey,Integer, String
 from app.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from app.links.models import Link
 
 class User(Base):
     __tablename__ = 'users'
@@ -12,4 +13,4 @@ class User(Base):
     is_active : Mapped[bool] = mapped_column(Boolean, default=True)
     created_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    links: Mapped[list["Link"]] = relationship("Link", back_populates='user')   
+    links: Mapped[list["Link"]] = relationship("Link", back_populates="user")

@@ -11,4 +11,4 @@ class Click(Base):
     user_agent: Mapped[str] = mapped_column(String(255))
     clicked_at : Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
-    link: Mapped["Link"] = relationship("Link", back_populates="clicks")
+    links: Mapped["Link"] = relationship("Link", back_populates="clicks")
