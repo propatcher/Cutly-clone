@@ -26,3 +26,12 @@ class LinksDAO(BaseDAO):
             result = await session.execute(delete_query)
             await session.commit()
             return result.rowcount
+    @classmethod
+    async def increment_click_count(cls, link_id: int):
+        async with async_session() as session:
+            # Используйте cls.model вместо Link для consistency
+            query = update(cls.model).where(cls.model.id == link_id).values(
+                clicks_count=cls.model.clicks_count + 1
+            )
+            await session.execute(query)
+            await session.commit()
