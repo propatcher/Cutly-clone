@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select
+from sqlalchemy import insert, select, update
 from app.clicks.models import Click
 from app.links.models import Link
 from app.dao.base_dao import BaseDAO
@@ -24,3 +24,10 @@ class ClicksDAO(BaseDAO):
             )
             result = await session.execute(query)
             return result.scalars().all()
+    @classmethod
+    async def increment_click_count(cls,link_id: int):
+        async with async_session() as session:
+            query = update(cls.model).where(Link.id == link_id).values(clicks_count=Link.clicks_count + 1)
+            await session.execute(query)
+            await session.commit()
+        

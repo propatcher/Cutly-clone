@@ -8,7 +8,7 @@ from app.users.dao import UserDAO
 from app.settings import settings
 
 def get_token(requset: Request):
-    token = requset.cookies.get("bookings_access_token")
+    token = requset.cookies.get("cutly_access_token")
     if not token:
         raise TokenAbsentException
     return token

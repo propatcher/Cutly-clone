@@ -22,21 +22,20 @@ async def register_user(user_data: SUserAuth):
 
 @router.post("/login")
 async def login_user(response: Response,user_data:SUserAuth):
-    user = await authenticate_user(user_data.email,user_data.password)
-    if not user:
-        raise IncorrectEmailOrPasswordException
-    access_token = create_access_token({"sub": str(user.id)})
-    response.set_cookie("bookings_access_token", access_token,httponly=True,secure=True)
-    return access_token
+    try:
+        user = await authenticate_user(user_data.email,user_data.password)
+        if not user:
+            raise IncorrectEmailOrPasswordException
+        access_token = create_access_token({"sub": str(user.id)})
+        response.set_cookie("cutly_access_token", access_token,httponly=True,secure=True)
+        return access_token
+    except AttributeError:
+        return {"Login or password" : "Incorrect"}
 
 @router.post("/logout")
 async def logout_user(response:Response):
-    if not User:
-        raise TokenAbsentException
-    response.delete_cookie("bookings_access_token")
+    response.delete_cookie("cutly_access_token")
     
 @router.post("/me")
 async def read_users_me(current_user: User = Depends(get_current_user)):
-    if not User:
-        raise TokenAbsentException
     return current_user
