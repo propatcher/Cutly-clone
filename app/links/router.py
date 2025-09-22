@@ -3,6 +3,7 @@ import string
 from fastapi import APIRouter, Depends, HTTPException,Request
 from fastapi.responses import RedirectResponse
 
+from fastapi_cache import FastAPICache
 from fastapi_cache.decorator import cache
 from app.exceptions import TokenAbsentException
 from app.users.dependencies import get_current_user
@@ -14,6 +15,13 @@ router = APIRouter(
     prefix="/links",
     tags=["Ссылки"]
 )
+
+def user_key_builder(func, *args, **kwargs):
+    current_user = kwargs.get('current_user')
+    if current_user:
+        return f"user_{current_user.id}_{func.__name__}"
+    return func.__name__
+
 
 @router.post("/create")
 async def create_short_link(link: str,current_user: User = Depends(get_current_user)):
@@ -38,13 +46,12 @@ async def short_redirect(short_code: str,request:Request):
     return RedirectResponse(url=link.original_url)
 
 @router.get("")
-@cache(expire=3600)
 async def get_your_links(current_user: User = Depends(get_current_user)):
     return await LinksDAO.find_all(user_id = current_user.id)
 
 @router.delete("/delete/{link_id}")
-@cache(expire=3600)
 async def delete_your_link(link_id:int,current_user: User = Depends(get_current_user)):
+    await FastAPICache.clear(key=f"user_{current_user.id}_get_your_links")
     return await LinksDAO.delete_your_links(current_user.id,link_id)
     
     
