@@ -1,6 +1,7 @@
 from fastapi import APIRouter,Depends,Response,HTTPException
 
 from app.exceptions import IncorrectEmailOrPasswordException, TokenAbsentException, UserAlreadyExistsException
+from app.tasks.email_confirmation import send_booking_confirmation_email
 from app.users.dependencies import get_current_user
 from app.users.models import User
 from app.users.auth import authenticate_user, create_access_token, get_password_hash, verify_password
@@ -17,6 +18,7 @@ async def register_user(user_data: SUserAuth):
     existing_user = await UserDAO.find_one_or_none(email=user_data.email)
     if existing_user:
         raise UserAlreadyExistsException
+    send_booking_confirmation_email.delay(user_data.email)
     hashed_password = get_password_hash(user_data.password)
     await UserDAO.add(email=user_data.email,hashed_password=hashed_password)
 

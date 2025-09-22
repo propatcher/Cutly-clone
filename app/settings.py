@@ -10,6 +10,11 @@ class Settings(BaseSettings):
     
     ALGORITHM: str
     SECRET_KEY: str
+    
+    SMTP_HOST: str
+    SMTP_PORT: str
+    SMTP_USER: str
+    SMTP_PASS: str
 
     @property
     def DATABASE_URL(self):
