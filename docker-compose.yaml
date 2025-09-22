@@ -8,6 +8,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/cutly
       - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       db:
         condition: service_healthy
@@ -38,5 +40,33 @@ services:
     volumes:
       - redis_data:/data
 
+  celery_worker:
+    build: .
+    command: celery -A app.tasks.tasks worker --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/cutly
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery_beat:
+    build: .
+    command: celery -A app.tasks.tasks beat --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/cutly
+      - REDIS_URL=redis://redis:6379
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
 volumes:
-    redis_data:
+  redis_data:
