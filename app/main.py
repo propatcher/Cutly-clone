@@ -42,3 +42,26 @@ async def startup():
 @app.get("/")
 async def header_testing():
     return {"fastapi_init" : True}
+
+        # from fastapi import FastAPI
+        # from sqladmin import Admin, ModelView
+        # from sqlalchemy import create_engine, Column, Integer, String
+        # from sqlalchemy.orm import declarative_base
+
+        # app = FastAPI()
+        # Base = declarative_base()
+        # engine = create_engine("sqlite:///example.db")
+
+        # class User(Base):
+        #     __tablename__ = "users"
+        #     id = Column(Integer, primary_key=True)
+        #     name = Column(String)
+
+        # Base.metadata.create_all(engine)
+
+        # admin = Admin(app, engine)
+
+        # class UserAdmin(ModelView, model=User):
+        #     column_list = [User.id, User.name]
+
+        # admin.add_view(UserAdmin)
