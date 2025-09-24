@@ -17,10 +17,10 @@ class ClicksDAO(BaseDAO):
     async def get_user_links_with_clicks_join(cls, user_id: int):
         async with async_session() as session:
             query = (
-                select(Link, Click)
-                .join(Click, Link.id == Click.link_id, isouter=True)
-                .filter(Link.user_id == user_id)
-                .order_by(Link.created_at.desc(), Click.clicked_at.desc())
+                select(Click, Link.short_code, Link.original_url)
+                .join(Link, Click.link_id == Link.id)
+                .where(Link.user_id == user_id)
+                .order_by(Click.clicked_at.desc())
             )
             result = await session.execute(query)
             return result.scalars().all()
