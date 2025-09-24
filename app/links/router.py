@@ -19,22 +19,15 @@ router = APIRouter(
 
 @router.post("/create")
 async def create_short_link(link:AnyUrl,current_user: User = Depends(get_current_user)):
-    link_str = str(link)
-    all_symbols = string.ascii_letters + string.digits
-    secure_random_string = ''.join(secrets.choice(all_symbols) for _ in range(10))
-    result = await LinksDAO.add_link(secure_random_string,link_str,current_user.id)
-    return await LinksDAO.find_one_or_none(short_code=secure_random_string)
-
+    return await LinksDAO.add_link(str(link),current_user.id)
 
 @router.get("/{short_code}")
 @cache(expire=3600)
 async def short_redirect(short_code: str,request:Request):
     link = await LinksDAO.find_one_or_none(short_code=short_code)
-    client_ip = request.client.host
-    user_agent = request.headers.get("user-agent")
     if not link:
         raise HTTPException(status_code=404, detail="Link not found")
-    await ClicksDAO.add_click(link.id,client_ip,user_agent)
+    await ClicksDAO.add_click(link.id,request.client.host,request.headers.get("user-agent"))
     await LinksDAO.increment_click_count(link.id)
     return RedirectResponse(url=link.original_url)
 

@@ -19,3 +19,6 @@ class User(Base):
     
 
     links: Mapped[list["Link"]] = relationship("Link", back_populates="user")
+    
+    def __str__(self):
+        return f"Пользователь {self.email}"
