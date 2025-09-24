@@ -16,7 +16,7 @@ class LinksDAO(BaseDAO):
                 Link.original_url == original_url, 
                 Link.user_id == user_id)
             find_result = await session.execute(find_query)
-            find_link = find_result.scalar_one_or_none()
+            find_link = find_result.first()
             if find_link:
                 raise LinkAlreadyExistException
             all_symbols = string.ascii_letters + string.digits

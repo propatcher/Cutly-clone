@@ -65,8 +65,8 @@ async def auth_ac():
         transport=ASGITransport(app=FastAPI_app), base_url="http://test"
     ) as ac:
         await ac.post("auth/login", json={
-            "email": "maria.ivanova@example.com",
-            "password": "secret"
+            "email": "ivan.petrov@example.com",
+            "password": "secret",
         })
         assert ac.cookies["cutly_access_token"]
         yield ac
