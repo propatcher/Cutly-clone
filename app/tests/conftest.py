@@ -11,7 +11,7 @@ from app.clicks.models import Click
 from app.links.models import Link
 
 from fastapi.testclient import TestClient
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from app.main import app as FastAPI_app
 
 @pytest.fixture(scope="session", autouse=True)
@@ -26,10 +26,8 @@ async def prepare_database():
         with open(f"app/tests/test_{model}.json", "r", encoding='utf-8') as file:
             data = json.load(file)
         
-        # ✅ ПРАВИЛЬНО: преобразуем даты после загрузки JSON
         for item in data:
             if 'created_at' in item:
-                # Убираем 'Z' если есть и преобразуем в datetime
                 date_str = item['created_at'].replace('Z', '')
                 item['created_at'] = datetime.fromisoformat(date_str)
             if 'clicked_at' in item:
@@ -56,7 +54,9 @@ def event_loop(request):
     
 @pytest.fixture(scope="function")
 async def ac():
-    async with AsyncClient(app=FastAPI_app, base_url="https://test") as ac:
+    async with AsyncClient(
+        transport=ASGITransport(app=FastAPI_app), base_url="http://test"
+    ) as ac:
         yield ac
         
 @pytest.fixture(scope='function')

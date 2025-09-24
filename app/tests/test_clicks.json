@@ -1,55 +1,47 @@
 [
   {
-    "id": 1,
     "link_id": 1,
     "ip_address": "192.168.1.100",
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "clicked_at": "2024-01-18T11:25:30"
   },
   {
-    "id": 2,
     "link_id": 1, 
     "ip_address": "192.168.1.101",
     "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
     "clicked_at": "2024-01-18T14:40:15"
   },
   {
-    "id": 3,
     "link_id": 1,
     "ip_address": "192.168.1.102",
     "user_agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15",
     "clicked_at": "2024-01-19T09:20:45"
   },
   {
-    "id": 4,
     "link_id": 2,
     "ip_address": "192.168.1.103",
     "user_agent": "Mozilla/5.0 (Android 13; Mobile; rv:109.0) Gecko/115.0 Firefox/115.0",
     "clicked_at": "2024-01-22T17:05:20"
   },
   {
-    "id": 5,
     "link_id": 3,
     "ip_address": "192.168.1.104",
     "user_agent": "PostmanRuntime/7.36.0",
     "clicked_at": "2024-01-21T14:15:10"
   },
   {
-    "id": 6,
     "link_id": 3,
     "ip_address": "192.168.1.105", 
     "user_agent": "curl/7.88.1",
     "clicked_at": "2024-01-21T16:30:55"
   },
   {
-    "id": 7,
     "link_id": 3,
     "ip_address": "192.168.1.106",
     "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
     "clicked_at": "2024-01-22T10:45:30"
   },
   {
-    "id": 8,
     "link_id": 4,
     "ip_address": "192.168.1.107",
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
