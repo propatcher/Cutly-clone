@@ -1,6 +1,6 @@
 import secrets
 import string
-from fastapi import APIRouter, Depends, HTTPException,Request
+from fastapi import APIRouter, Body, Depends, HTTPException,Request
 from fastapi.responses import RedirectResponse
 
 from fastapi_cache import FastAPICache
@@ -18,7 +18,7 @@ router = APIRouter(
 )
 
 @router.post("/create")
-async def create_short_link(link:AnyUrl,current_user: User = Depends(get_current_user)):
+async def create_short_link(link: AnyUrl = Body(..., embed=True),current_user: User = Depends(get_current_user)):
     return await LinksDAO.add_link(str(link),current_user.id)
 
 @router.get("/{short_code}")

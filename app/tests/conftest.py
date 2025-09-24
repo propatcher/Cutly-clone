@@ -64,11 +64,19 @@ async def auth_ac():
     async with AsyncClient(
         transport=ASGITransport(app=FastAPI_app), base_url="http://test"
     ) as ac:
-        await ac.post("auth/login", json={
+        # 1. Правильный путь с /
+        login_response = await ac.post("/auth/login", json={
             "email": "ivan.petrov@example.com",
             "password": "secret",
         })
+        assert login_response.status_code == 200, f"Login failed: {login_response.text}"
+
+        # 2. Проверяем, что кука установлена
+        assert "cutly_access_token" in ac.cookies, "Auth cookie not set!"
+
+        # 3. (Опционально) Проверим, что кука не пустая
         assert ac.cookies["cutly_access_token"]
+
         yield ac
         
 @pytest.fixture(scope='function')
