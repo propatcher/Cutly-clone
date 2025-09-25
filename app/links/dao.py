@@ -10,21 +10,29 @@ from app.database import async_session
 class LinksDAO(BaseDAO):
     model = Link
     
-    async def add_link(original_url:str,user_id:int):
+    async def add_link(original_url: str, user_id: int):
         async with async_session() as session:
             find_query = select(Link).where(
-                Link.original_url == original_url, 
-                Link.user_id == user_id)
+                Link.original_url == original_url.strip(),
+                Link.user_id == user_id
+            )
             find_result = await session.execute(find_query)
-            find_link = find_result.first()
-            if find_link:
+            if find_result.first():
                 raise LinkAlreadyExistException
+
             all_symbols = string.ascii_letters + string.digits
             secure_random_string = ''.join(secrets.choice(all_symbols) for _ in range(10))
-            query = insert(Link).values(short_code=secure_random_string,original_url=original_url,user_id=user_id)
+
+            query = insert(Link).values(
+                short_code=secure_random_string,
+                original_url=original_url.strip(),
+                user_id=user_id
+            ).returning(Link)
+
             result = await session.execute(query)
+            new_link = result.scalar_one()
             await session.commit()
-            return secure_random_string
+            return new_link
             
     async def delete_your_links(user_id:int, link_id:int):
         async with async_session() as session:

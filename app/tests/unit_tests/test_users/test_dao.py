@@ -59,3 +59,13 @@ async def test_find_click_by_user_id(user_id,is_present):
         assert len(click) > 0
     else:
         assert len(click) == 0
+
+@pytest.mark.parametrize("original_url,user_id", [
+    ("https://vk.com/feed", 1),
+    ("https://samara.hh.ru/", 2),
+])
+async def test_add_link_success(original_url, user_id):
+    link = await LinksDAO.add_link(original_url, user_id)
+    assert link is not None
+    assert link.original_url == original_url
+    assert link.user_id == user_id
