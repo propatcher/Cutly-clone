@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
+import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
@@ -13,7 +14,7 @@ from app.database import engine
 from app.links.router import router as router_links
 from app.settings import settings
 from app.users.router import router as router_users
-
+from app.logger import logger
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -56,3 +57,13 @@ app.add_middleware(
 @app.get("/")
 async def header_testing():
     return {"fastapi_init": True}
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.perf_counter()
+    response = await call_next(request)
+    process_time = time.perf_counter() - start_time
+    logger.info("Request exec time", extra={
+        "procces_time" : round(process_time,4)
+    })
+    return response

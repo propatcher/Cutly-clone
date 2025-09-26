@@ -42,7 +42,7 @@ async def login_user(response: Response, user_data: SUserAuth):
         httponly=True,
     )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token}
 
 
 @router.post("/logout")
