@@ -1,33 +1,35 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
-from app.settings import settings
-from app.admin.admin_setup import setup_admin
-from app.users.router import router as router_users
-from app.links.router import router as router_links
-from app.clicks.router import router as router_clicks
-from app.database import engine
-from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
-
 from redis import asyncio as aioredis
+
+from app.admin.admin_setup import setup_admin
+from app.clicks.router import router as router_clicks
+from app.database import engine
+from app.links.router import router as router_links
+from app.settings import settings
+from app.users.router import router as router_users
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     redis = await aioredis.from_url(
-        f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}", 
-        encoding="utf8", 
-        decode_responses=False
+        f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}",
+        encoding="utf8",
+        decode_responses=False,
     )
     FastAPICache.init(RedisBackend(redis), prefix="cache")
     yield
     await redis.close()
 
+
 app = FastAPI(lifespan=lifespan)
 
-admin = setup_admin(app,engine)
+admin = setup_admin(app, engine)
 
 app.include_router(router_users)
 app.include_router(router_links)
@@ -50,10 +52,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-    
-
 
 @app.get("/")
 async def header_testing():
-    return {"fastapi_init" : True}
-
+    return {"fastapi_init": True}

@@ -1,6 +1,9 @@
 from email.message import EmailMessage
-from app.settings import settings
+
 from pydantic import EmailStr
+
+from app.settings import settings
+
 
 def create_user_confirmation_template(
     email_to: EmailStr,
@@ -16,6 +19,6 @@ def create_user_confirmation_template(
             <h1>Добро пожаловать на сайт Cutly!</h1>
                     {email_to}
         """,
-        subtype="html"
+        subtype="html",
     )
     return email
