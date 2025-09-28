@@ -33,6 +33,12 @@ app = FastAPI(lifespan=lifespan)
 
 admin = setup_admin(app, engine)
 
+instrumentator = Instrumentator(
+    should_group_status_codes=False,
+    excluded_handlers=[".*admin.*", "/metrics"],
+)
+instrumentator.instrument(app).expose(app)
+
 app.include_router(router_users)
 app.include_router(router_links)
 app.include_router(router_clicks)
@@ -69,8 +75,3 @@ async def add_process_time_header(request: Request, call_next):
     })
     return response
 
-instrumentator = Instrumentator(
-    should_group_status_codes=False,
-    excluded_handlers=[".*admin.*", "/metrics"],
-)
-instrumentator.instrument(app).expose(app)
