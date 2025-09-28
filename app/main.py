@@ -16,6 +16,7 @@ from app.links.router import router as router_links
 from app.settings import settings
 from app.users.router import router as router_users
 from app.logger import logger
+from app.prometheus.router import router as router_prometheus
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -42,6 +43,7 @@ instrumentator.instrument(app).expose(app)
 app.include_router(router_users)
 app.include_router(router_links)
 app.include_router(router_clicks)
+app.include_router(router_prometheus)
 
 origins = [
     "http://localhost.tiangolo.com",

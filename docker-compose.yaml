@@ -15,6 +15,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    expose:
+      - "8000"
 
   db:
     image: postgres:13
@@ -39,6 +41,55 @@ services:
       retries: 5
     volumes:
       - redis_data:/data
+
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    environment:
+      DATA_SOURCE_NAME: "postgresql://user:password@db:5432/cutly?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "9187"
+
+  redis_exporter:
+    image: oliver006/redis_exporter:latest
+    environment:
+      REDIS_ADDR: redis://redis:6379
+    depends_on:
+      - redis
+    expose:
+      - "9121"
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    depends_on:
+      - web
+      - postgres_exporter
+      - redis_exporter
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    depends_on:
+      - prometheus
 
   celery_worker:
     build: .
@@ -70,3 +121,5 @@ services:
 
 volumes:
   redis_data:
+  prometheus_data:
+  grafana_data:
