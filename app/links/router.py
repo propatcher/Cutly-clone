@@ -25,7 +25,6 @@ async def create_short_link(
 
 
 @router.get("/{short_code}")
-@cache(expire=3600)
 async def short_redirect(short_code: str, request: Request):
     link = await LinksDAO.find_one_or_none(short_code=short_code)
     if not link:
@@ -36,7 +35,7 @@ async def short_redirect(short_code: str, request: Request):
     await LinksDAO.increment_click_count(link.id)
     return RedirectResponse(url=link.original_url)
 
-
+@cache(expire=3600)
 @router.get("")
 async def get_your_links(current_user: User = Depends(get_current_user)):
     return await LinksDAO.find_all(user_id=current_user.id)

@@ -1,3 +1,4 @@
+from fastapi_cache.decorator import cache
 from fastapi import APIRouter, Depends
 
 from app.clicks.dao import ClicksDAO
@@ -7,7 +8,7 @@ from app.users.models import User
 
 router = APIRouter(prefix="/click", tags=["Переходы по созданным ссылкам"])
 
-
+@cache(expire=3600)
 @router.get("")
 async def get_your_clicks(current_user: User = Depends(get_current_user)):
     return await ClicksDAO.get_user_links_with_clicks_join(current_user.id)
