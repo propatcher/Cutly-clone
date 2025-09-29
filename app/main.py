@@ -40,11 +40,6 @@ instrumentator = Instrumentator(
 )
 instrumentator.instrument(app).expose(app)
 
-app.include_router(router_users)
-app.include_router(router_links)
-app.include_router(router_clicks)
-app.include_router(router_prometheus)
-
 origins = [
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
@@ -62,6 +57,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(router_users)
+app.include_router(router_links)
+app.include_router(router_clicks)
+app.include_router(router_prometheus)
 
 @app.get("/")
 async def header_testing():
