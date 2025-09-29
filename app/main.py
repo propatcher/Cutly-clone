@@ -62,6 +62,7 @@ app.include_router(router_links)
 app.include_router(router_clicks)
 app.include_router(router_prometheus)
 
+
 @app.get("/")
 async def header_testing():
     return {"fastapi_init": True}
